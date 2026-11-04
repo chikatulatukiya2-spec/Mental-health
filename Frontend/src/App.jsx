@@ -12,12 +12,13 @@ import SelfCare from './pages/SelfCare';
 import Progress from './pages/Progress';
 import Goals from './pages/Goals';
 import Support from './pages/Support';
+import Resources from './pages/Resources';
 import AIChat from './pages/AIChat';
 import { Protected, GuestOnly } from './auth';
 
 const privateRoutes = [
   ['/home', Home], ['/screening', Screening], ['/mood', MoodTracker], ['/journal', Journal],
-  ['/self-care', SelfCare], ['/progress', Progress], ['/goals', Goals], ['/support', Support], ['/ai-chat', AIChat]
+  ['/self-care', SelfCare], ['/progress', Progress], ['/goals', Goals], ['/support', Support], ['/resources', Resources], ['/ai-chat', AIChat]
 ];
 
 export default function App() {

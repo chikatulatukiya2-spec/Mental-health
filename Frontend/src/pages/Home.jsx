@@ -5,11 +5,11 @@ import { Page, SectionTitle, InfoIcon, LogoutButton } from '../components';
 import { useAuth } from '../auth';
 
 const categories = [
-  ['/information', 'blue', Brain, 'Depression'],
-  ['/information', 'green', HeartPulse, 'Anxiety'],
+  ['/information?topic=Depression', 'blue', Brain, 'Depression'],
+  ['/information?topic=Anxiety', 'green', HeartPulse, 'Anxiety'],
   ['/self-care', 'pink', Leaf, 'Self-Care'],
-  ['/information', 'purple', BookOpen, 'Education'],
-  ['/support', 'cyan', ShieldCheck, 'Resources'],
+  ['/information?topic=Wellbeing', 'purple', BookOpen, 'Education'],
+  ['/resources', 'cyan', ShieldCheck, 'Resources'],
   ['/support', 'blue', Headphones, 'Support'],
 ];
 
