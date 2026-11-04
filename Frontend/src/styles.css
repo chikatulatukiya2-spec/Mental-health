@@ -134,6 +134,11 @@ body{background:#eef2fb}
   .resource-card small{font-size:13px}
   .insight-card p{font-size:14px}
 }
+/* care items are now buttons that open a detail view */
+.care-item{width:100%;text-align:left;font:inherit;color:inherit;background:#fff;cursor:pointer}
+.care-item:hover{background:#fafbff}
+.info-links{display:flex;gap:10px;margin:12px 0 4px}
+.info-links .secondary-btn{flex:1;padding:11px 12px;font-size:12px;margin:0}
 /* ---- AI chat ---- */
 .ai-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .ai-header>div{flex:1;min-width:0}
