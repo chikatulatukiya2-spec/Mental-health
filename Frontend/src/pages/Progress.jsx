@@ -66,6 +66,14 @@ export default function Progress() {
             </div>
           </div>
         </section>
+        <section className="progress-section selfcare-progress">
+          <div className="section-title"><h3>Self-Care</h3><span>Last 7 days</span></div>
+          <div className="selfcare-stats">
+            <div><b>{weekCount()}</b><small>sessions</small></div>
+            <div><b>{streakDays() ? `🔥 ${streakDays()}` : '—'}</b><small>day streak</small></div>
+          </div>
+          <Link className="link-btn" to="/self-care">Do a session</Link>
+        </section>
       </>)}
 
       {tab === 'Screenings' && (
