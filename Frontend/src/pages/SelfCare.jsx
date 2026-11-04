@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Wind, Brain, Music, Heart, Leaf, Moon, ChevronLeft, ChevronRight, Play, Pause, RotateCcw, CheckCircle2 } from 'lucide-react';
+import {
+  Wind, Brain, Music, Heart, Leaf, Moon, ChevronLeft, ChevronRight, Star,
+  Waves,
+} from 'lucide-react';
 import { Page, TopBar } from '../components';
+import { Link } from 'react-router-dom';
 import { api } from '../api';
+import {
+  getFavorites, toggleFavorite, streakDays, weekCount, lastDoneTitle,
+} from './selfCareStore';
+import {
+  BreathTimer, FocusTimer, Soundscape, PlanRunner, PLANS,
+} from './selfCareActivities';
 
 const typeIcons = {
   breathing: Wind,
@@ -13,150 +23,126 @@ const typeIcons = {
 };
 const FallbackIcon = Heart;
 
-/* ---------- Breathing pacer: 4s inhale / 4s hold / 6s exhale ---------- */
-const BREATH_PHASES = [
-  ['Breathe in', 4, 1],
-  ['Hold', 4, 1],
-  ['Breathe out', 6, 0.62],
-];
-const BREATH_CYCLE = 14;
+/* #4: step-by-step variations per exercise */
+const ROUTINES = {
+  breathing: [
+    ['Calm breathing', ['Sit comfortably and relax your shoulders.', 'In through your nose for 4 seconds.', 'Hold gently for 4 seconds.', 'Out through your mouth for 6 seconds.', 'Repeat for 4–6 cycles.']],
+    ['Energising breath', ['Sit upright.', 'Breathe in deeply for 4 seconds.', 'Exhale sharply for 2 seconds.', 'Repeat 10 quick rounds.', 'Notice the boost in alertness.']],
+  ],
+  mindfulness: [
+    ['5-4-3-2-1 senses', ['Name 5 things you can see.', 'Name 4 things you can touch.', 'Name 3 things you can hear.', 'Name 2 things you can smell.', 'Name 1 thing you can taste.']],
+    ['Body scan', ['Close your eyes and breathe slowly.', 'Notice your feet. Let them soften.', 'Move attention up: legs, hips, belly.', 'Then chest, hands, shoulders, face.', 'If the mind wanders, gently return.']],
+  ],
+  affirmations: [
+    ['Kind statements', ['Pick one statement: "I can take one small step at a time."', 'Say it slowly, out loud or in your head.', 'Repeat it 5 times.', 'Now choose a second one and repeat.']],
+    ['Gratitude flip', ['Name one thing that went okay today.', 'Name one person you are glad exists.', 'Name one body part that worked hard for you.', 'Say thank you to each of them.']],
+  ],
+  habits: [
+    ['Tiny habit builder', ['Pick one micro-habit: a glass of water, 10 squats, a 5-minute walk.', 'Attach it to something you already do daily.', 'Do it now — small counts.', 'Celebrate finishing with a small "yes!".']],
+    ['Evening reset', ['Tidy one small surface near you.', 'Write tomorrow\'s single most important task.', 'Set out clothes or prep a bag.', 'Put your phone across the room.']],
+  ],
+};
 
-function BreathTimer() {
-  const [running, setRunning] = useState(false);
-  const [t, setT] = useState(0);
-
-  useEffect(() => {
-    if (!running) return;
-    const id = setInterval(() => setT((x) => x + 1), 1000);
-    return () => clearInterval(id);
-  }, [running]);
-
-  const inCycle = t % BREATH_CYCLE;
-  const cycles = Math.floor(t / BREATH_CYCLE);
-  let phase = BREATH_PHASES[0], remainder = inCycle;
-  for (const p of BREATH_PHASES) {
-    if (remainder < p[1]) { phase = p; break; }
-    remainder -= p[1];
-  }
-  const [label, secs, scale] = phase;
-
-  return (
-    <div className="activity-box">
-      <div className="breath-orb-wrap">
-        <div
-          className="breath-orb"
-          style={{ transform: `scale(${scale})`, transitionDuration: `${secs}s` }}
-        />
-        <div className="breath-label">
-          <b>{label}</b>
-          <span>{Math.max(1, secs - remainder)}s</span>
-        </div>
-      </div>
-      <p className="activity-count">Cycles completed: {cycles}</p>
-      <div className="activity-controls">
-        <button className="activity-btn primary" onClick={() => setRunning((r) => !r)}>
-          {running ? <Pause size={16} /> : <Play size={16} />}
-          {running ? 'Pause' : t ? 'Resume' : 'Start breathing'}
-        </button>
-        <button className="activity-btn" onClick={() => { setRunning(false); setT(0); }}>
-          <RotateCcw size={16} /> Reset
-        </button>
-      </div>
-      <small className="activity-note">Stop anytime if you feel dizzy or uncomfortable.</small>
-    </div>
-  );
-}
-
-/* ---------- Generic countdown timer for other exercises ---------- */
-function FocusTimer({ suggested = 3 }) {
-  const presets = [1, suggested, suggested + 2];
-  const [minutes, setMinutes] = useState(suggested);
-  const [running, setRunning] = useState(false);
-  const [left, setLeft] = useState(suggested * 60);
-  const done = left === 0;
-
-  useEffect(() => {
-    if (!running || done) return;
-    const id = setInterval(() => setLeft((x) => Math.max(0, x - 1)), 1000);
-    return () => clearInterval(id);
-  }, [running, done]);
-
-  const pick = (m) => { setRunning(false); setMinutes(m); setLeft(m * 60); };
-  const mm = Math.floor(left / 60);
-  const ss = String(left % 60).padStart(2, '0');
-
-  return (
-    <div className="activity-box">
-      <div className="timer-display">{done ? '✓' : `${mm}:${ss}`}</div>
-      {done && <p className="activity-done"><CheckCircle2 size={16} /> Nice — that counts. Well done.</p>}
-      <div className="timer-presets">
-        {presets.map((m) => (
-          <button key={m} className={m === minutes ? 'pill-btn active' : 'pill-btn'} onClick={() => pick(m)}>
-            {m} min
-          </button>
-        ))}
-      </div>
-      <div className="activity-controls">
-        <button
-          className="activity-btn primary"
-          disabled={done}
-          onClick={() => setRunning((r) => !r)}
-        >
-          {running ? <Pause size={16} /> : <Play size={16} />}
-          {running ? 'Pause' : done ? 'Done' : left < minutes * 60 ? 'Resume' : 'Start timer'}
-        </button>
-        <button className="activity-btn" onClick={() => { setRunning(false); setLeft(minutes * 60); }}>
-          <RotateCcw size={16} /> Reset
-        </button>
-      </div>
-      <small className="activity-note">Racing thoughts? Just let the timer run — you don't have to do it perfectly.</small>
-    </div>
-  );
-}
-
-const ACTIVITY_BY_TYPE = {
-  breathing: () => <BreathTimer />,
-  mindfulness: () => <FocusTimer suggested={3} />,
-  relaxation: () => <FocusTimer suggested={3} />,
-  sleep: () => <FocusTimer suggested={5} />,
-  affirmations: () => <FocusTimer suggested={1} />,
-  habits: () => <FocusTimer suggested={5} />,
+/* #3: mood-aware suggestion */
+const SUGGESTIONS = {
+  Anxious: ['breathing', 'Anxious lately? Slow breathing is the fastest way to calm your body.', '🧘'],
+  Overwhelmed: ['breathing', 'Feeling overwhelmed? Start with one minute of guided breathing.', '🧘'],
+  Sad: ['affirmations', 'Low mood? Kind words to yourself are a gentle start today.', '💛'],
+  Okay: ['habits', 'Doing okay? A 5-minute habit builds on a good day.', '🌱'],
 };
 
 export default function SelfCare() {
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState('');
+  const [favs, setFavs] = useState(getFavorites());
+  const [streak, setStreak] = useState(streakDays());
+  const [week, setWeek] = useState(weekCount());
+  const [suggestion, setSuggestion] = useState(null); // #3
+  const [night, setNight] = useState(false); // #10
+  const [routineIdx, setRoutineIdx] = useState(0); // #4
+
   useEffect(() => {
     api.selfCare().then((r) => setItems(r.data || [])).catch((e) => setError(e.message));
   }, []);
+  useEffect(() => {
+    api.moods().then((r) => {
+      const latest = (r.data || [])[0];
+      const sug = latest && SUGGESTIONS[latest.mood];
+      if (sug) setSuggestion(sug);
+    }).catch(() => {});
+  }, []);
+
+  const refreshStats = () => { setStreak(streakDays()); setWeek(weekCount()); };
+  const open = (item) => { setSelected(item); setRoutineIdx(0); setNight(false); };
+
+  const ordered = React.useMemo(() => {
+    const withFav = items.map((x) => ({ ...x, _fav: favs.includes(x.title) }));
+    return withFav.sort((a, b) => (b._fav - a._fav) || (a.id - b.id)); // #9: favourites first
+  }, [items, favs]);
+  const last = lastDoneTitle();
 
   if (selected) {
-    const Activity = ACTIVITY_BY_TYPE[selected.type];
+    const planDef = PLANS.find((p) => p.name === selected.title); // #8: plan items opened from the list
+    if (planDef) {
+      return (
+        <Page>
+          <TopBar title={planDef.name} />
+          <button className="article-back" onClick={() => setSelected(null)}>
+            <ChevronLeft size={15} /> Back to self-care
+          </button>
+          <p className="subheading">Follow along — one step at a time</p>
+          <PlanRunner plan={planDef} onDone={() => { refreshStats(); finishFeedback(); setSelected(null); }} />
+        </Page>
+      );
+    }
+    const Icon = typeIcons[selected.type] || FallbackIcon;
+    const routines = ROUTINES[selected.type];
+    const Activity = activityFor(selected.type);
+    const showNight = ['sleep', 'relaxation'].includes(selected.type);
+    const showScapes = ['relaxation', 'mindfulness', 'sleep'].includes(selected.type);
     return (
-      <Page>
+      <Page className={night ? 'wind-down-page' : undefined}>
         <TopBar title={selected.title} />
-        <button className="article-back" onClick={() => setSelected(null)}>
+        <button className="article-back" onClick={() => { openListRefresh(); }}>
           <ChevronLeft size={15} /> Back to self-care
         </button>
         <article className="article">
+          <span className="care-detail-icon"><Icon size={26} /></span>
           <h2>{selected.title}</h2>
-          {String(selected.content || '')
-            .split(/\n+/)
-            .filter(Boolean)
-            .map((par, i) => (
-              <p key={i}>{par}</p>
-            ))}
+          {routines && (
+            <>
+              <div className="tabs routine-tabs">
+                {routines.map(([name], i) => (
+                  <button key={name} onClick={() => setRoutineIdx(i)}>
+                    <span className={i === routineIdx ? 'pill active' : 'pill'}>{name}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="routine-steps">
+                {routines[routineIdx][1].map((s, i) => (
+                  <div className="symptom" key={i}>{i + 1}. {s}</div>
+                ))}
+              </div>
+            </>
+          )}
+          {!routines && String(selected.content || '').split(/\n+/).filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}
         </article>
-        {Activity && (
-          <>
-            <p className="subheading">Try it now</p>
-            <Activity />
-          </>
-        )}
+
+        <p className="subheading">Try it now</p>
+        <Activity type={selected.type} title={selected.title} suggested={suggestedFor(selected.type)}
+          night={night && showNight} onToggleNight={showNight ? () => setNight((n) => !n) : undefined} />
+
+        {showScapes && <><p className="subheading">Ambient sounds</p><Soundscape /></>}
+
+        <Link className="activity-btn journal-cta" to={`/journal?title=${encodeURIComponent(selected.title)}&content=${encodeURIComponent(`I did "${selected.title}" today.`)}`}><ChevronRight size={14}/> Write about it</Link>
       </Page>
     );
   }
+
+  /** helpers kept below JSX for clarity */
+  function openListRefresh() { refreshStats(); setSelected(null); }
+  function finishFeedback() { if (navigator.vibrate) navigator.vibrate([40, 60, 40]); }
 
   return (
     <Page>
@@ -165,24 +151,80 @@ export default function SelfCare() {
         <h2>Take care of yourself</h2>
         <p>Small actions can make a big difference.</p>
       </div>
+
+      {(streak > 0 || week > 0 || last) && (
+        <div className="streak-bar">
+          {streak > 0 && <span>🔥 {streak}-day streak</span>}
+          {week > 0 && <span>✅ {week} session{week > 1 ? 's' : ''} this week</span>}
+          {last && <span className="muted">Last: {last.title}</span>}
+        </div>
+      )}
+
+      {suggestion && (
+        <button
+          className="suggestion-banner"
+          onClick={() => { const item = items.find((x) => x.type === suggestion[0]); if (item) open(item); }}
+        >
+          <span className="suggest-emoji">{suggestion[2]}</span>
+          <div>
+            <b>Start here</b>
+            <small>{suggestion[1]}</small>
+          </div>
+          <ChevronRight size={16} />
+        </button>
+      )}
+
+      {PLANS.map((p) => (
+        <button className="plan-card" key={p.name} onClick={() => open({ ...p, title: p.name })}>
+          <Waves size={15} />
+          <div>
+            <b>{p.name}</b>
+            <small>{p.steps.map((s) => s[1]).join(' → ')}</small>
+          </div>
+          <ChevronRight size={16} />
+        </button>
+      ))}
+
       <div className="care-list">
         {error && <p className="form-error">{error}</p>}
         {!error && items.length === 0 && <div className="loading-state">Loading...</div>}
-        {items.map((x) => {
+        {ordered.map((x) => {
           const Icon = typeIcons[x.type] || FallbackIcon;
-          const interactive = typeIcons[x.type] && ACTIVITY_BY_TYPE[x.type];
+          const guided = typeIcons[x.type];
           return (
-            <button className="care-item" key={x.id || x.title} onClick={() => setSelected(x)}>
-              <span className="care-icon"><Icon size={20} /></span>
-              <div>
-                <b>{x.title}</b>
-                <small>{x.description}{interactive ? ' • guided' : ''}</small>
-              </div>
-              <ChevronRight size={18} />
-            </button>
+            <div className={x._fav ? 'care-row pinned' : 'care-row'} key={x.id || x.title}>
+              <button className="care-item" onClick={() => open(x)}>
+                <span className="care-icon"><Icon size={20} /></span>
+                <div>
+                  <b>{x.title}</b>
+                  <small>{x.description}{guided ? ' • guided' : ''}</small>
+                </div>
+                <ChevronRight size={18} />
+              </button>
+              {guided && (
+                <button
+                  className="fav-btn" type="button" aria-label={x._fav ? 'Remove favourite' : 'Add favourite'}
+                  onClick={() => setFavs(toggleFavorite(x.title))}
+                >
+                  <Star size={15} fill={x._fav ? 'currentColor' : 'none'} className={x._fav ? 'fav-on' : ''} />
+                </button>
+              )}
+            </div>
           );
         })}
       </div>
+      {last && items.some((x) => x.title === last.title) && (
+        <button className="resume-btn" onClick={() => open(items.find((x) => x.title === last.title))}>
+          Repeat last: {last.title} <ChevronRight size={14} />
+        </button>
+      )}
     </Page>
   );
 }
+
+function activityFor(type) {
+  if (type === 'breathing') return BreathTimer;
+  if (['mindfulness', 'relaxation', 'affirmations', 'habits', 'sleep'].includes(type)) return FocusTimer;
+  return null;
+}
+function suggestedFor(type) { return { mindfulness: 3, relaxation: 3, sleep: 5, affirmations: 1, habits: 3 }[type] || 2; }

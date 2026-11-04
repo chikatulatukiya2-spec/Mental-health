@@ -161,6 +161,61 @@ body{background:#eef2fb}
   .breath-orb-wrap{width:170px;height:170px}
   .activity-note{font-size:12px}
 }
+/* ---- self-care: streaks, plans, favourites, wind-down, sounds ---- */
+.streak-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11px;font-weight:700;color:#5b54d5;background:#f5f2ff;border:1px solid #e3ddfb;border-radius:13px;padding:9px 12px;margin-bottom:12px}
+.suggestion-banner{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid #f6e3b4;background:#fef9ea;border-radius:14px;padding:12px;font:inherit;color:#17203a;cursor:pointer;margin-bottom:12px}
+.suggestion-banner b{font-size:12px;display:block}
+.suggestion-banner small{font-size:11px;color:#68728c}
+.suggest-emoji{font-size:20px;flex:none}
+.suggestion-banner>div{flex:1}
+.care-row{display:flex;align-items:stretch;gap:6px}
+.care-row .care-item{flex:1}
+.care-row .care-item svg{margin-left:auto}
+.fav-btn{border:0;background:transparent;color:#b9bfe6;width:34px;flex:none;display:grid;place-items:center;cursor:pointer;border-radius:10px}
+.fav-btn .fav-on{color:#f4a900}
+.pinned .care-item{border-color:#e3ddfb;background:#fafaff}
+.plan-card{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid #e5e8f1;border-radius:14px;background:linear-gradient(115deg,#f2f7ff,#f7f2ff);padding:12px;margin:8px 0;font:inherit;color:#17203a;cursor:pointer}
+.plan-card>div{flex:1}
+.plan-card b{font-size:12px}
+.plan-card small{display:block;font-size:10px;color:#68728c;margin-top:2px}
+.plan-card svg{color:#5b54d5}
+.resume-btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;border:1px dashed #cfd3f2;background:#fff;color:#5b54d5;font:inherit;font-size:12px;font-weight:700;border-radius:14px;padding:11px;margin-top:10px;cursor:pointer}
+.routine-tabs{margin:4px 0 8px}
+.routine-steps .symptom{font-size:13px}
+.care-detail-icon{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#eeeaff;color:#5e57d9;margin-bottom:8px}
+.cuetoggle{display:inline-flex;align-items:center;gap:5px;border:0;background:#f1f3fb;color:#5a6485;border-radius:16px;padding:6px 10px;font-size:11px;cursor:pointer;font:inherit}
+.breath-orb-wrap{position:relative}
+.breath-ring{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);color:#5b54d5}
+.breath-ring-progress{transition:stroke-dashoffset 1s linear}
+.volume-row{display:flex;align-items:center;gap:8px;width:100%;color:#5a6485}
+.volume-row input{flex:1}
+.wind-down-page .app-main{background:#1d2233}
+.wind-down-page .topbar h1,.wind-down-page .article h2{color:#f2e9dc}
+.wind-down-page .article p{color:#c9c2b4}
+.wind-down {
+  background:#242b40;border-color:#3a4260;color:#f2e9dc;box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+.wind-down .breath-label,.wind-down .ActivityShell{color:#f2e9dc}
+.wind-down .activity-count,.wind-down .timer-display{color:#a99fe0}
+.wind-down .activity-btn{background:#2f3752;border-color:#414a6e;color:#f2e9dc}
+.wind-down .activity-btn.primary{background:linear-gradient(100deg,#4a6bc5,#7a5bd8);border:0;color:#fff}
+.wind-down .activity-note,.wind-down .activity-count{color:#8b93ad}
+.wind-down .cuetoggle,.wind-down .pill-btn{background:#2f3752;border-color:#414a6e;color:#cfc8bd}
+.wind-down .pill-btn.active{background:#4a4a80;border-color:#6a6ac0;color:#fff}
+.night-toggle{align-self:flex-end;border:0;background:transparent;color:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.selfcare-stats{display:flex;gap:12px}
+.selfcare-stats>div{flex:1;border:1px solid #e5e8f1;border-radius:13px;padding:10px;text-align:center}
+.selfcare-stats b{font-size:20px;color:#5b54d5;display:block}
+.selfcare-stats small{font-size:10px;color:#76809a}
+.link-btn{margin-top:8px}
+.activity-btn.journal-cta{margin:8px 0}
+.done-session{margin-bottom:8px}
+@media (min-width:1024px){
+  .plan-card b,.suggestion-banner b{font-size:14px}
+  .plan-card small,.suggestion-banner small{font-size:12px}
+  .streak-bar{font-size:13px}
+  .routine-steps .symptom{font-size:14px}
+}
 /* ---- AI chat ---- */
 .ai-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .ai-header>div{flex:1;min-width:0}
