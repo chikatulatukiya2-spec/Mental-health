@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Wind, Brain, Music, Heart, Leaf, Moon, ChevronLeft, ChevronRight, Star,
-  Waves,
+  Wind, Brain, Music, Heart, Leaf, Moon, ChevronLeft, ChevronRight, Star, Sunrise,
 } from 'lucide-react';
-import { Page, TopBar } from '../components';
+import { Page, TopBar, SectionTitle } from '../components';
 import { Link } from 'react-router-dom';
 import { api } from '../api';
 import {
@@ -174,16 +173,19 @@ export default function SelfCare() {
         </button>
       )}
 
-      {PLANS.map((p) => (
-        <button className="plan-card" key={p.name} onClick={() => open({ ...p, title: p.name })}>
-          <Waves size={15} />
-          <div>
+      <SectionTitle>Daily plans</SectionTitle>
+      <div className="plan-grid">
+        {PLANS.map((p) => (
+          <button className="plan-card" key={p.name} onClick={() => open({ ...p, title: p.name })}>
+            <span className="plan-icon">
+              {p.name === 'Quick calm' ? <Wind size={22} /> : p.name === 'Night wind-down' ? <Moon size={22} /> : <Sunrise size={22} />}
+            </span>
             <b>{p.name}</b>
-            <small>{p.steps.map((s) => s[1]).join(' → ')}</small>
-          </div>
-          <ChevronRight size={16} />
-        </button>
-      ))}
+            <small>{p.steps.map((s) => s[1]).join(' • ')}</small>
+            <span className="plan-cta">{p.steps.length} steps <ChevronRight size={13} /></span>
+          </button>
+        ))}
+      </div>
 
       <div className="care-list">
         {error && <p className="form-error">{error}</p>}
