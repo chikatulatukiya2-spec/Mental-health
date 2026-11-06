@@ -5,6 +5,7 @@ import { Page, TopBar, LogoutButton } from '../components';
 import { GoalsPanel } from './Goals';
 import { useAuth } from '../auth';
 import { api } from '../api';
+import { weekCount, streakDays } from './selfCareStore';
 
 const TABS = ['Mood', 'Screenings', 'Goals'];
 
