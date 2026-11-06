@@ -206,6 +206,15 @@ export function Soundscape() {
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.3);
   const nodes = useRef(null);
+  const [ytTrack, setYtTrack] = useState(null); // index into TRACKS, or null
+
+  /* user instrumental tracks (YouTube embeds) */
+  const TRACKS = [
+    { id: 'lBrFFrEhzpY', label: '🎤 Acrostico' },
+    { id: 'imGaOIm5HOk', label: '🎹 Kiss the Rain' },
+    { id: '0SmUeqO_TKU', label: '🍉 Watermelon Sugar' },
+    { id: 'ZqTALagDtoE', label: '🎻 Queen & Poet' },
+  ];
 
   const stop = () => {
     if (nodes.current) {
@@ -219,6 +228,7 @@ export function Soundscape() {
 
   const start = (type) => {
     stop();
+    setYtTrack(null);
     const ctx = getCtx();
     const spec = SCAPES[type];
     // 2s looped noise buffer
@@ -247,6 +257,13 @@ export function Soundscape() {
     setScayType(type);
   };
 
+  /* ---------- YouTube instrumentals ---------- */
+  const toggleTrack = (i) => {
+    if (ytTrack === i) { setYtTrack(null); setPlaying(false); setScayType(null); return; }
+    stop();
+    setYtTrack(i); setPlaying(true); setScayType(`yt${i}`);
+  };
+
   return (
     <div className="activity-box">
       <p className="activity-count">Choose a calm sound</p>
@@ -256,7 +273,26 @@ export function Soundscape() {
             {label}
           </button>
         ))}
+        {TRACKS.map((t, i) => (
+          <button key={t.id} className={playKey(`yt${i}`, scayType, playing)} onClick={() => toggleTrack(i)}>
+            {t.label}
+          </button>
+        ))}
       </div>
+      {ytTrack !== null && (
+        <div className="yt-player-wrap" aria-label="Instrumental music player">
+          <iframe
+            key={TRACKS[ytTrack].id}
+            src={`https://www.youtube-nocookie.com/embed/${TRACKS[ytTrack].id}?autoplay=1&loop=1&playlist=${TRACKS[ytTrack].id}`}
+            title={TRACKS[ytTrack].label}
+            allow="autoplay; encrypted-media"
+            frameBorder="0"
+          />
+          <a className="yt-open" href={`https://www.youtube.com/watch?v=${TRACKS[ytTrack].id}`} target="_blank" rel="noreferrer">
+            Open on YouTube
+          </a>
+        </div>
+      )}
       <label className="volume-row">
         <VolumeX size={14} />
         <input type="range" min="0" max="1" step="0.05" value={volume}

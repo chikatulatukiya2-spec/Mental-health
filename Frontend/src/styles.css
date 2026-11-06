@@ -424,6 +424,8 @@ input::placeholder,textarea::placeholder{color:#8f84b8;opacity:1}
 .ai-card,.ai-content{background:var(--pd-surface);border-radius:16px;border:1px solid var(--pd-border);padding:14px;margin-bottom:12px}
 .ai-card .ai-content,.ai-card p{background:transparent;border:0}
 .ai-button{display:inline-block;background:var(--pd-gradient);color:#fff;border-radius:18px;padding:8px 16px;font-size:12px;font-weight:700;margin-top:8px}
+.yt-player-wrap{position:relative;margin:8px 0}.yt-player-wrap iframe{width:100%;aspect-ratio:16/9;border-radius:12px;display:block}
+.yt-open{display:inline-block;font-size:11px;color:#76809a;padding:4px 0}
 .profile-circle-btn{color:var(--pd-accent)}
 .category-link{color:#cfc5ee}
 .logout-icon-btn{background:rgba(157,107,255,.14);color:var(--pd-accent)}
