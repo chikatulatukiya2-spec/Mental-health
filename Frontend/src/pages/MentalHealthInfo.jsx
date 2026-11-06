@@ -1,2 +1,58 @@
-import React,{useEffect,useState}from'react';import{Brain,CheckCircle2}from'lucide-react';import{Link,useSearchParams}from'react-router-dom';import{Page,TopBar,Pill,GradientButton}from'../components';import{api}from'../api';export default function MentalHealthInfo(){const[params]=useSearchParams();const initial=params.get('topic');const[topic,setTopic]=useState(['Depression','Anxiety','Wellbeing'].includes(initial)?initial:'Depression'),[data,setData]=useState(null),[error,setError]=useState('');useEffect(()=>{setData(null);api.information(topic).then(r=>setData(r.data)).catch(e=>setError(e.message))},[topic]);const symptomsHeading=topic==='Wellbeing'?'Helpful Habits':'Common Symptoms';return <Page><TopBar title="Mental Health Information"/><div className="tabs">{['Depression','Anxiety','Wellbeing'].map(t=><button key={t} onClick={()=>setTopic(t)}><Pill active={topic===t}>{t}</Pill></button>)}</div>{error?<p className="form-error">{error}</p>:data?<>
-<article className="article"><div className="info-banner"><div className="head-orb"><Brain size={42}/></div></div><h2>{data.title}</h2><p>{data.text}</p><h3>{symptomsHeading}</h3>{(data.symptoms||[]).map(x=><div className="symptom" key={x}><CheckCircle2 size={16}/>{x}</div>)}</article><div className="info-links"><Link className="secondary-btn" to="/self-care">Try a self-care exercise</Link><Link className="secondary-btn" to="/support">Talk to someone</Link></div><p className="disclaimer">This information is general and not a diagnosis. Only a professional can assess your mental health.</p></>:<div className="loading-state">Loading...</div>}<GradientButton to="/screening">Take Screening</GradientButton></Page>}
+import React, { useEffect, useState } from 'react';
+import { Brain, CheckCircle2 } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Page, TopBar, Pill, GradientButton } from '../components';
+import { api } from '../api';
+
+export default function MentalHealthInfo() {
+  const [params] = useSearchParams();
+  const initial = params.get('topic');
+  const [topic, setTopic] = useState(['Depression', 'Anxiety', 'Wellbeing'].includes(initial) ? initial : 'Depression');
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setData(null);
+    setError('');
+    api.information(topic).then(r => setData(r.data)).catch(e => setError(e.message));
+  }, [topic]);
+
+  const symptomsHeading = topic === 'Wellbeing' ? 'Helpful Habits' : 'Common Symptoms';
+
+  return (
+    <Page>
+      <TopBar title="Mental Health Information" />
+      <div className="tabs info-tabs">
+        {['Depression', 'Anxiety', 'Wellbeing'].map(t => (
+          <button key={t} type="button" className="tab-btn" onClick={() => setTopic(t)}>
+            <Pill active={topic === t}>{t}</Pill>
+          </button>
+        ))}
+      </div>
+      {error ? <p className="form-error">{error}</p> : data ? (
+        <div className="info-content" key={topic}>
+          <article className="article info-article">
+            <div className="info-banner"><div className="head-orb"><Brain size={42} /></div></div>
+            <h2>{data.title}</h2>
+            <p className="info-lead">{data.text}</p>
+            <h3>{symptomsHeading}</h3>
+            <div className="symptom-grid">
+              {(data.symptoms || []).map((x, i) => (
+                <div className="symptom-card" key={x} style={{ animationDelay: `${i * 55}ms` }}>
+                  <span className="symptom-icon"><CheckCircle2 size={18} /></span>
+                  <span>{x}</span>
+                </div>
+              ))}
+            </div>
+          </article>
+          <div className="info-links">
+            <Link className="secondary-btn" to="/self-care">Try a self-care exercise</Link>
+            <Link className="secondary-btn" to="/support">Talk to someone</Link>
+          </div>
+          <p className="disclaimer">This information is general and not a diagnosis. Only a professional can assess your mental health.</p>
+        </div>
+      ) : <div className="loading-state info-loading">Loading...</div>}
+      <GradientButton to="/screening">Take Screening</GradientButton>
+    </Page>
+  );
+}
