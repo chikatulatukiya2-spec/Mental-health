@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Brain, CheckCircle2 } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Page, TopBar, Pill, GradientButton } from '../components';
 import { api } from '../api';
@@ -17,11 +17,11 @@ export default function MentalHealthInfo() {
     api.information(topic).then(r => setData(r.data)).catch(e => setError(e.message));
   }, [topic]);
 
-  const symptomsHeading = topic === 'Wellbeing' ? 'Helpful Habits' : 'Common Symptoms';
+  const symptomsHeading = topic === 'Wellbeing' ? 'Helpful habits' : 'Common signs';
 
   return (
     <Page>
-      <TopBar title="Mental Health Information" />
+      <TopBar title="Learn" />
       <div className="tabs info-tabs">
         {['Depression', 'Anxiety', 'Wellbeing'].map(t => (
           <button key={t} type="button" className="tab-btn" onClick={() => setTopic(t)}>
@@ -31,28 +31,29 @@ export default function MentalHealthInfo() {
       </div>
       {error ? <p className="form-error">{error}</p> : data ? (
         <div className="info-content" key={topic}>
-          <article className="article info-article">
-            <div className="info-banner"><div className="head-orb"><Brain size={42} /></div></div>
+          <article className="info-article">
             <h2>{data.title}</h2>
             <p className="info-lead">{data.text}</p>
-            <h3>{symptomsHeading}</h3>
-            <div className="symptom-grid">
-              {(data.symptoms || []).map((x, i) => (
-                <div className="symptom-card" key={x} style={{ animationDelay: `${i * 55}ms` }}>
-                  <span className="symptom-icon"><CheckCircle2 size={18} /></span>
-                  <span>{x}</span>
-                </div>
-              ))}
-            </div>
+            <section className="info-card">
+              <h3>{symptomsHeading}</h3>
+              <ul className="symptom-list">
+                {(data.symptoms || []).map((x, i) => (
+                  <li className="symptom-item" key={x} style={{ animationDelay: `${i * 40}ms` }}>
+                    <span className="symptom-icon"><Check size={15} strokeWidth={2.5} /></span>
+                    <span>{x}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
           </article>
           <div className="info-links">
-            <Link className="secondary-btn" to="/self-care">Try a self-care exercise</Link>
-            <Link className="secondary-btn" to="/support">Talk to someone</Link>
+            <Link className="secondary-btn" to="/self-care">Self-care</Link>
+            <Link className="secondary-btn" to="/support">Get support</Link>
           </div>
-          <p className="disclaimer">This information is general and not a diagnosis. Only a professional can assess your mental health.</p>
+          <p className="disclaimer">General information only — not a diagnosis.</p>
         </div>
       ) : <div className="loading-state info-loading">Loading...</div>}
-      <GradientButton to="/screening">Take Screening</GradientButton>
+      <GradientButton to="/screening">Take screening</GradientButton>
     </Page>
   );
 }

@@ -123,42 +123,34 @@ body{background:#eef2fb}
 }
 
 /* ---- Mental health info (depression/anxiety/wellbeing) ---- */
-.info-tabs{gap:8px;padding:5px;border-radius:16px}
+.info-tabs{gap:6px;padding:4px;border-radius:14px}
 .tab-btn{flex:1;border:0;background:transparent;padding:0;cursor:pointer;min-width:0}
-.tab-btn .pill{display:block;width:100%;padding:10px 8px;border-radius:12px;font-size:12px;font-weight:700;transition:background-color .22s ease,color .22s ease,box-shadow .22s ease,transform .18s ease}
+.tab-btn .pill{display:block;width:100%;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;transition:background-color .2s ease,color .2s ease,transform .16s ease}
 .tab-btn:hover .pill{transform:translateY(-1px)}
-.tab-btn:active .pill{transform:translateY(0)}
-.info-content{animation:info-section-in .34s cubic-bezier(.22,1,.36,1)}
+.info-content{animation:info-section-in .3s ease}
 .info-loading{animation:info-fade-in .2s ease}
-.info-article{padding:8px 0 4px}
-.info-banner{height:118px;border-radius:18px;margin-bottom:14px;border:1px solid var(--pd-border);transition:border-color .22s ease,box-shadow .22s ease;animation:info-fade-in .4s cubic-bezier(.22,1,.36,1) both}
-.info-article h2{font-size:22px;line-height:1.25;margin:0 0 8px}
-.info-lead{font-size:14px;line-height:1.65;color:var(--pd-muted);margin:0 0 18px}
-.info-article h3{font-size:13px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#cfc6f0;margin:0 0 10px}
-.symptom-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:16px}
-.symptom-card{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1px solid var(--pd-border);border-radius:14px;background:linear-gradient(180deg,rgba(157,107,255,.08),rgba(37,28,62,.55));color:var(--pd-text);font-size:13px;line-height:1.45;opacity:0;transition:transform .22s ease,border-color .24s ease,background .24s ease,box-shadow .24s ease;animation:info-card-in .42s cubic-bezier(.22,1,.36,1) both}
-.symptom-card:hover{transform:translateY(-2px);border-color:#58428d;background:linear-gradient(180deg,rgba(157,107,255,.13),rgba(37,28,62,.75));box-shadow:0 8px 20px rgba(15,10,30,.22)}
-.symptom-icon{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(157,107,255,.16);color:#c4a1ff;transition:background-color .24s ease,color .24s ease,transform .22s ease}
-.symptom-card:hover .symptom-icon{background:rgba(157,107,255,.24);color:#dcc8ff}
+.info-article{padding:4px 0 0}
+.info-article h2{font-size:24px;line-height:1.2;margin:2px 0 8px;letter-spacing:-.02em}
+.info-lead{font-size:14px;line-height:1.65;color:var(--pd-muted);margin:0 0 16px}
+.info-card{background:var(--pd-surface);border:1px solid var(--pd-border);border-radius:16px;padding:14px 14px 6px;margin-bottom:14px}
+.info-card h3{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#cfc6f0;margin:0 0 8px}
+.symptom-list{list-style:none;margin:0;padding:0}
+.symptom-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);color:var(--pd-text);font-size:13px;line-height:1.45;opacity:0;animation:info-card-in .34s ease both}
+.symptom-item:first-child{border-top:0;padding-top:2px}
+.symptom-icon{flex:none;width:22px;height:22px;border-radius:999px;display:grid;place-items:center;background:rgba(157,107,255,.16);color:#c4a1ff;margin-top:1px}
 .symptom-icon svg{display:block}
-.info-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 12px}
-.info-links .secondary-btn{width:100%;margin:0;padding:12px 10px;font-size:12px;line-height:1.3;border-radius:14px;text-align:center;display:flex;align-items:center;justify-content:center;transition:transform .18s ease,border-color .22s ease,background-color .22s ease,color .22s ease,box-shadow .22s ease}
-.info-links .secondary-btn:hover{transform:translateY(-1px)}
+.info-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px}
+.info-links .secondary-btn{width:100%;margin:0;padding:11px 10px;font-size:12px;border-radius:12px;text-align:center;display:flex;align-items:center;justify-content:center;transition:border-color .2s ease,background-color .2s ease,color .2s ease}
 @keyframes info-fade-in{from{opacity:0}to{opacity:1}}
-@keyframes info-section-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes info-card-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes info-section-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes info-card-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){
-  .info-content,.info-loading,.info-banner,.info-article,.symptom-card,.tab-btn .pill,.tab-btn:hover .pill,.info-links .secondary-btn,.info-links .secondary-btn:hover,.symptom-card:hover,.category-link,.category-link:hover{animation:none;transition:none;transform:none;opacity:1}
-}
-@media (min-width:700px){
-  .symptom-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .info-article h2{font-size:26px}
-  .info-lead{font-size:15px}
+  .info-content,.info-loading,.symptom-item,.tab-btn .pill,.category-link{animation:none;transition:none;transform:none;opacity:1}
 }
 @media (min-width:1024px){
-  .info-tabs .pill{font-size:13px}
-  .symptom-card{font-size:14px;padding:14px 16px}
-  .info-links .secondary-btn{font-size:13px}
+  .info-article h2{font-size:28px}
+  .info-lead,.symptom-item{font-size:14px}
+  .info-card{padding:16px 18px 8px}
 }
 
 /* ---- Resources page (articles + motivational insights) ---- */
